@@ -1,8 +1,9 @@
 import math
 import matplotlib.pyplot as plt
-import pygame
+import matplotlib.animation as animation
 
-def gen(min, max, step):
+# Generates Gauss function
+def generate_gauss(min, max, step):
     x0 = int((min+max)/2)
 
     ran = int(((max - min) / step))
@@ -12,16 +13,15 @@ def gen(min, max, step):
     for x in steps:
         inp.append(math.exp(-1 * ((x - x0) * (x - x0))))
 
-    return inp
+    return inp, step
 
 #print(gen(0, 10, .1))
 
 # U_t = a * U _xx
-def calc_this(ui, a, tau, h):
+def thermal_conductivity(ui, a, tau, h):
     denom = (1/(tau / 2)) + (2 / (h * h))
     l = 100
     res = [[i] for i in ui]
-    #print(res)
     for j in range(1, len(ui) * 5):
         for i in range(len(res)):
             if i == 0:
@@ -38,18 +38,34 @@ def calc_this(ui, a, tau, h):
 
     uji = []
     for i in res:
-        uji.append(i[-1])
+        uji.append(a * i[-1])
     t = [tau * i for i in range(len(uji))]
     return uji, t
 
-print(len(gen(0, 20, .05)))
+print(len(generate_gauss(0, 20, .05)))
 
-x, t = calc_this(gen(0, 10, .05), 1., .05, .1)
-x2, t2 = calc_this(gen(0, 10, .03), 1., .03, .1)
-x3, t3 = calc_this(gen(0, 10, .01), 1., .01, .1)
+x = []
+for i in range(1, 100):
+    x.append(generate_gauss(0, 10, .5 / i))
+#plt.figure()
+#x.reverse()
+#y = []
 
-plt.figure()
-plt.plot(t, x)
-plt.plot(t2, x2)
-plt.plot(t3, x3)
+#for g in x:
+    #y.append(thermal_conductivity(g[0], 1., g[1], .01))
+
+fig = plt.figure()
+ax1 = fig.add_subplot(1,1,1)
+x.reverse()
+def animate(i):
+    y = thermal_conductivity(x[ i % len(x) ][0], 1., x[ i % len(x) ][1], .01)
+    ax1.clear()
+    ax1.plot( y[1], y[0] )
+
+    plt.axis([0, 10, 0, 0.8])
+    plt.xlabel("Ciepło")
+    plt.ylabel("Czas")
+    plt.title("Rozchodzenie się ciepła")
+
+ani = animation.FuncAnimation(fig, animate, interval = 800)
 plt.show()
