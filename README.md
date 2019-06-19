@@ -1,4 +1,4 @@
-# heat-equation-with-runge-kutta-algorithm
+# heat-equation-algorithm
 As a task for Symbolic Calculations Labolatories we had to implement algorithm to calculate 
 fundamental solution of the one-dimensional heat equation.
 
